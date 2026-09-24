@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Journalisation pilotée par profil Spring :
+  - dev  : console lisible + fichier tournant logs/<app>.log (consultation locale).
+  - prod : console JSON structurée (logstash-logback-encoder) → stdout, collectée par la
+           plateforme (ELK / Loki / Grafana). Pas de fichier en conteneur.
+  Les champs de contexte (correlationId, userId, uri, httpStatus) viennent du MDC et figurent
+  dans les deux formats. Niveaux pilotés par application.yml (logging.level / LOG_LEVEL).
+-->
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="test"/>
+    <property name="LOG_DIR" value="${LOG_DIR:-logs}"/>
+    <!-- correlationId affiché uniquement quand présent (vide au démarrage → masqué). Les champs
+         userId/uri/httpStatus restent dans le MDC et figurent dans le JSON prod. -->
+    <property name="LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %replace([%X{correlationId}] ){'\[\] ', ''}%clr(%-40.40logger{39}){cyan} : %m%n%wEx"/>
+
+    <!-- dev : console lisible + fichier tournant -->
+    <springProfile name="!prod">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_DIR}/${appName}.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_DIR}/${appName}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+                <maxFileSize>10MB</maxFileSize>
+                <maxHistory>7</maxHistory>
+                <totalSizeCap>200MB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+
+    <!-- prod : JSON structuré sur stdout -->
+    <springProfile name="prod">
+        <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <includeMdcKeyName>correlationId</includeMdcKeyName>
+                <includeMdcKeyName>userId</includeMdcKeyName>
+                <includeMdcKeyName>uri</includeMdcKeyName>
+                <includeMdcKeyName>httpStatus</includeMdcKeyName>
+                <customFields>{"app":"${appName}"}</customFields>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="JSON"/>
+        </root>
+    </springProfile>
+</configuration>

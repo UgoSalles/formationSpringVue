@@ -1,0 +1,7 @@
+{
+  "required": "Ce champ est obligatoire.",
+  "email": "Adresse email invalide.",
+  "minLength": "Minimum {count} caractères.",
+  "maxLength": "Maximum {count} caractères.",
+  "passwordMismatch": "Les mots de passe ne correspondent pas."
+}

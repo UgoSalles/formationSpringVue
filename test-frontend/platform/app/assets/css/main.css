@@ -1,0 +1,433 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+/* ===========================================================================
+   global.css — structure de page, typographie et classes utilitaires de la
+   couche `@platform/front`.
+
+   Règle platform : AUCUN style ne vit dans les composants `.vue` (cf. CLAUDE.md
+   §4.2), sauf un éventuel composant générique de formatage d'affichage. Tout
+   ce qui touche au THÈME (espacements, rayons, opacités, transitions) est
+   déclaré en tokens Vuetify (`theme.variables`, nuxt.config) et consommé ici
+   via `var(--v-platform-*)`. Les COULEURS viennent du thème (`var(--v-theme-*)`).
+   Pas de `px` : rem / vh / % uniquement (rendu indépendant de la taille de
+   police du navigateur).
+   ========================================================================= */
+
+/* ── Typographie ─────────────────────────────────────────────────────────
+   Vuetify applique Roboto par défaut ; on impose Inter (corps) et JetBrains
+   Mono (code) sans toucher au sizing rem de Vuetify. */
+.v-application {
+  font-family: 'Inter', sans-serif;
+}
+.v-application code,
+.v-application pre,
+.v-application kbd,
+.v-application samp,
+.font-monospace {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Emphase (opacités centralisées en tokens) ───────────────────────── */
+.platform-muted {
+  opacity: var(--v-platform-emphasis-muted);
+}
+.platform-subtle {
+  opacity: var(--v-platform-emphasis-subtle);
+}
+.platform-faint {
+  opacity: var(--v-platform-emphasis-faint);
+}
+
+/* ── Structure de page (pages générées + composants génériques) ──────── */
+.platform-page {
+  width: 100%;
+  max-width: 75rem;
+  margin-inline: auto;
+}
+.platform-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--v-platform-space-md);
+  margin-bottom: var(--v-platform-space-lg);
+}
+
+/* ── Largeurs de contrôles compacts (header) ─────────────────────────── */
+.platform-control-sm {
+  max-width: 5.5rem; /* sélecteur de langue */
+}
+.platform-control-md {
+  max-width: 10rem; /* sélecteur de thème (doit afficher « Contraste » en entier) */
+}
+
+/* ── Footer discret (dans la colonne de contenu, pas pleine largeur) ─────── */
+.platform-footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--v-platform-space-md);
+  padding: 0 var(--v-platform-space-sm);
+  flex-wrap: wrap;
+}
+.platform-footer__links {
+  display: flex;
+  align-items: center;
+  gap: var(--v-platform-space-md);
+}
+.platform-footer-link {
+  color: inherit;
+  font-size: 0.75rem;
+  opacity: var(--v-platform-emphasis-muted);
+  text-decoration: none;
+  transition: opacity var(--v-platform-transition-fast) ease-in-out;
+}
+.platform-footer-link:hover {
+  opacity: 1;
+}
+.platform-version {
+  margin-left: auto;
+  font-size: 0.75rem;
+  opacity: var(--v-platform-emphasis-faint);
+}
+
+/* ===========================================================================
+   Shell « panneaux flottants » — sidebar + header + contenu sont des surfaces
+   arrondies posées sur un fond teinté (var(--v-theme-background)), séparées par
+   des gouttières. Remplace le layout edge-to-edge Vuetify (drawer/app-bar/footer).
+   ========================================================================= */
+.platform-shell {
+  display: flex;
+  gap: var(--v-platform-space-md);
+  height: 100dvh;
+  padding: var(--v-platform-space-md);
+  background: rgb(var(--v-theme-background));
+}
+.platform-panel {
+  background: rgb(var(--v-theme-surface));
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: var(--v-platform-radius-lg);
+}
+.platform-shell__rail {
+  flex: 0 0 15rem;
+  min-width: 0;
+}
+.platform-shell__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--v-platform-space-md);
+}
+.platform-shell__content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+/* Pages enveloppées (hors pages `bare` comme le dashboard bento) : panneau plein, hauteur remplie. */
+.platform-page-panel {
+  min-height: 100%;
+  padding: var(--v-platform-space-lg);
+  background: rgb(var(--v-theme-surface));
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: var(--v-platform-radius-lg);
+}
+
+/* ── Header flottant ────────────────────────────────────────────────────── */
+.platform-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--v-platform-space-sm);
+  height: 3.5rem;
+  padding: 0 var(--v-platform-space-md);
+}
+/* Boutons icônes du header (cloche, avatar) : taille cohérente avec les sélecteurs (~40px), sinon
+   la densité `compact` globale des VBtn les réduit à ~20px → effet « icônes minuscules ». */
+.platform-header .v-btn.v-btn--icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  min-width: 2.5rem;
+}
+.platform-header .v-btn.v-btn--icon .v-icon {
+  font-size: 1.3rem;
+}
+
+/* ── Sidebar : brand + navigation + carte utilisateur ───────────────────── */
+.platform-sidebar {
+  /* Conteneur TRANSPARENT (pas le panneau visible) qui porte la hauteur ancrée au viewport et
+     empile deux panneaux distincts : le menu (haut) et un encart auxiliaire (bas). On ancre la
+     hauteur ici (bloc) car le `height` d'un item flex en ligne — le rail — est neutralisé. */
+  height: calc(100dvh - 2 * var(--v-platform-space-md));
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--v-platform-space-md);
+}
+
+/* Partie 1 — le menu (panneau, padding réduit, dimensionné à son contenu, scrolle si trop long) */
+.platform-sidebar__menu {
+  flex: 0 1 auto;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: var(--v-platform-space-sm);
+}
+/* Partie 2 — encart auxiliaire séparé (zone personnalisable). Grandit pour remplir l'espace restant
+   sous le menu (l'identité/déconnexion vit désormais dans le menu de l'avatar, header). */
+.platform-sidebar__aux {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--v-platform-space-sm);
+  padding: var(--v-platform-space-sm);
+}
+.platform-brand {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: var(--v-platform-space-md);
+  margin-bottom: var(--v-platform-space-md);
+  border-bottom: 1px solid rgba(var(--v-theme-accent), 0.35);
+}
+.platform-brand__mark {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: var(--v-platform-radius-md);
+  background: linear-gradient(140deg, rgb(var(--v-theme-primary)), rgb(var(--v-theme-accent)));
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.platform-brand__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+.platform-brand__name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.platform-nav {
+  flex-shrink: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.platform-nav__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.platform-nav__section {
+  padding: 0.5rem 0.5rem 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(var(--v-theme-accent));
+  opacity: 0.9;
+}
+.platform-nav__item {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--v-platform-radius-md);
+  color: rgb(var(--v-theme-on-surface));
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  opacity: 0.78;
+  transition:
+    background-color var(--v-platform-transition-fast) ease,
+    opacity var(--v-platform-transition-fast) ease;
+}
+.platform-nav__item:hover {
+  background-color: rgba(var(--v-border-color), 0.12);
+  opacity: 1;
+}
+.platform-nav__item--active {
+  background-color: rgba(var(--v-theme-primary), 0.12);
+  color: rgb(var(--v-theme-primary));
+  opacity: 1;
+  font-weight: 600;
+}
+.platform-nav__item--active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  width: 0.1875rem;
+  border-radius: 0 0.1875rem 0.1875rem 0;
+  background: rgb(var(--v-theme-accent));
+}
+.platform-sidebar__spacer {
+  flex: 1 1 auto;
+}
+
+/* ── Sous-menus : drill-down glissant (un seul niveau visible à la fois) ──── */
+.platform-nav__group {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+.platform-nav__chev {
+  margin-left: auto;
+  opacity: 0.5;
+}
+.platform-nav__viewport {
+  overflow: hidden;
+}
+.platform-nav__track {
+  display: flex;
+  width: 200%;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.platform-nav__track--sub {
+  transform: translateX(-50%);
+}
+.platform-nav__panel {
+  flex: 0 0 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.platform-nav__back {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  font-weight: 700;
+  color: rgb(var(--v-theme-primary));
+  margin-bottom: 0.1rem;
+}
+.platform-nav__item--child {
+  padding: 0.5rem 0.6rem;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+}
+.platform-nav__bullet {
+  width: 0.35rem;
+  height: 0.35rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .platform-nav__track {
+    transition: none;
+  }
+}
+
+/* ── Encart « zone personnalisable » : placeholder pointillé (repli du slot extra) ── */
+.platform-placeholder {
+  flex: 1 1 auto;
+  min-height: 5rem;
+  display: grid;
+  place-items: center;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  opacity: 0.5;
+  border: 1px dashed rgba(var(--v-border-color), 0.5);
+  border-radius: var(--v-platform-radius-md);
+}
+
+@media (max-width: 600px) {
+  .platform-shell {
+    padding: var(--v-platform-space-sm);
+    gap: var(--v-platform-space-sm);
+  }
+}
+
+/* ── Panneau de notifications (ex-PlatformNotificationPanel) ─────────────── */
+/* Cap de hauteur DÉDIÉ (classe propre) : à ne pas mettre sur `.platform-panel` générique, sinon les
+   panneaux du shell (menu, encart, header) héritent du plafond et l'encart ne remplit plus l'espace. */
+.platform-notif-panel {
+  max-height: 25rem;
+}
+.platform-notif {
+  cursor: pointer;
+  transition: background-color var(--v-platform-transition-fast) ease-in-out;
+}
+.platform-notif:hover {
+  background-color: rgba(127, 127, 127, 0.12);
+}
+.platform-notif--read {
+  opacity: var(--v-platform-emphasis-muted);
+}
+
+/* ── Transition de page (pageTransition name="page", mode out-in) ──────────
+   Entrée plus longue que la sortie : la page sortante s'efface vite (0.2s),
+   l'entrante se pose en douceur (0.32s) → mouvement fluide, pas « sec ».
+   Easing « decelerate » (cubic-bezier material) pour l'entrée. */
+.page-enter-active {
+  transition:
+    opacity 0.32s ease,
+    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.page-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(0.75rem);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+}
+
+/* ── Toasts (conteneur fixe + TransitionGroup name="toast") ───────────── */
+.platform-toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  max-width: min(90vw, 26.25rem);
+  pointer-events: none;
+}
+.platform-toast-container > * {
+  pointer-events: auto;
+}
+.platform-toast {
+  min-width: 17.5rem;
+}
+.toast-enter-active,
+.toast-leave-active {
+  transition:
+    opacity 0.18s ease-in-out,
+    transform 0.18s ease-in-out;
+}
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(5rem);
+}

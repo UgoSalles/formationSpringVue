@@ -1,0 +1,17 @@
+#!/bin/sh
+# Hook géré par le platform — ne pas modifier.
+# Refuse un commit non conforme. Pour corriger : 'npm run format'.
+set -e
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$STAGED" ] && exit 0
+
+# prettier + eslint sur les SEULS fichiers indexés.
+FRONT=$(printf '%s\n' "$STAGED" | grep -E '\.(ts|tsx|vue|css|json)$' || true)
+if [ -n "$FRONT" ]; then
+  echo "→ prettier + eslint (fichiers indexés)"
+  printf '%s\n' "$FRONT" | xargs npx prettier --check \
+    && printf '%s\n' "$FRONT" | xargs npx eslint --max-warnings=0
+fi
+
+exit 0

@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, stable]
+
+jobs:
+  frontend:
+    runs-on: docker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      # Vulnérabilités npm : seuil 'critical' sur les seules deps de prod (cf. mode standard).
+      - name: Frontend — audit
+        run: npm audit --omit=dev --audit-level=critical
+      - name: Frontend — format
+        run: npm run format:check
+      - name: Frontend — lint
+        run: npm run lint
+      - name: Frontend — test
+        run: npm run test
+      - name: Frontend — build
+        run: npm run build

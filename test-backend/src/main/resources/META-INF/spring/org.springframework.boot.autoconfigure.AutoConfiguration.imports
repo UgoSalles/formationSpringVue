@@ -1,0 +1,6 @@
+platform.common.config.PlatformAutoConfiguration
+platform.auth.AuthSupportAutoConfiguration
+platform.auth.AuthAutoConfiguration
+platform.auth.AuthDisabledAutoConfiguration
+platform.throttle.ThrottleAutoConfiguration
+platform.seed.SeedAutoConfiguration

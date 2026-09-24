@@ -1,0 +1,83 @@
+spring:
+    # Défaut = nom du projet : permet aux tests (et à tout boot sans .env) de résoudre le placeholder,
+    # tout en restant surchargeable par la variable d'environnement APP_NAME.
+  application:
+    name: ${APP_NAME:test}
+
+  profiles:
+    active: ${APP_ENV:dev}
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    # Dialecte déduit automatiquement par Hibernate depuis la connexion JDBC (ne pas le forcer).
+    open-in-view: false
+
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=10m
+
+  mail:
+    host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
+    port: ${MAIL_PORT:2525}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# Authentification (MDC). Validation JWT via JWKS, flux BFF — fourni par platform-back.
+# Débrayable avec platform.auth.enabled=false.
+platform:
+  auth:
+    enabled: false  # connexion non configurée d'origine — passer à true une fois l'IdP branché
+    url: ${AUTH_URL}
+    client-id: ${AUTH_CLIENT_ID}
+    client-secret: ${AUTH_CLIENT_SECRET}
+    frontend-url: ${FRONTEND_URL:/}
+    cookie-secure: ${COOKIE_SECURE:true}
+    # Durées de vie des cookies (secondes) : access 8 h, refresh 7 jours. Le refresh silencieux
+    # renouvelle l'access ; la session tient tant que le cookie de refresh est valide.
+    access-max-age: ${ACCESS_MAX_AGE:28800}
+    refresh-max-age: ${REFRESH_MAX_AGE:604800}
+  # Throttle anti-flood (token-bucket par IP+méthode+chemin) — fourni par platform-back, actif par défaut.
+  # Protège des rafales sur une même requête ; la protection brute-force du login est côté MDC.
+  throttle:
+    enabled: ${THROTTLE_ENABLED:true}
+    min-interval-ms: ${THROTTLE_MIN_INTERVAL_MS:200}
+
+server:
+  port: ${APP_PORT:8080}
+  shutdown: graceful
+  servlet:
+    # `/api` est un marqueur de routage côté front, pas une partie du contrat du back : les
+    # contrôleurs (lib + projet) mappent SANS `/api`. En dev, le context-path le rajoute pour que le
+    # front tape `/api/*` directement sur le back. En prod, nginx route `/api/*` vers le back en
+    # STRIPPANT le préfixe → on laisse alors `SERVER_CONTEXT_PATH` vide (le back reçoit la racine).
+    context-path: ${SERVER_CONTEXT_PATH:/api}
+  # `X-Forwarded-Prefix` (posé par nginx en prod) est réappliqué par Spring → callback OAuth correct
+  # même quand le context-path est vide côté back.
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    root: info
+    com.example: ${LOG_LEVEL:info}
+    # Calme le bruit de démarrage des frameworks (versions, pool, bloc « Database info »…).
+    org.hibernate: warn
+    com.zaxxer.hikari: warn
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui

@@ -1,0 +1,49 @@
+{
+  "nav": { "home": "Accueil" },
+  "legal": {
+    "mentions": "Mentions légales",
+    "privacy": "Confidentialité",
+    "cookies": "Cookies",
+    "contact": "Contact",
+    "cgv": "CGV",
+    "placeholder": "Contenu à compléter par le projet."
+  },
+  "pages": {
+    "dashboard": "Accueil",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "notFound": "Page introuvable"
+  },
+  "actions": {
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "edit": "Éditer",
+    "delete": "Supprimer",
+    "confirm": "Confirmer",
+    "menu": "Menu",
+    "notifications": "Notifications",
+    "openMenu": "Ouvrir le menu"
+  },
+  "user": {
+    "menu": "Mon compte",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "theme": {
+    "label": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "a11y": "Contraste"
+  },
+  "auth": { "loginButton": "Se connecter" },
+  "public": { "tagline": "Accessible sans authentification." },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "Aucune notification",
+    "markAllRead": "Tout marquer lu",
+    "clearAll": "Tout supprimer",
+    "remove": "Supprimer"
+  }
+}

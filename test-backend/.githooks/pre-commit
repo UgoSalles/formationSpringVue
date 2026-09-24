@@ -1,0 +1,19 @@
+#!/bin/sh
+# Hook géré par le platform — ne pas modifier.
+# Refuse un commit non conforme. Pour corriger : 'mvn spring-javaformat:apply'.
+set -e
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$STAGED" ] && exit 0
+
+# Checkstyle scopé aux SEULS .java indexés (rapide sur gros module).
+JAVA=$(printf '%s\n' "$STAGED" | grep -E '\.java$' || true)
+if [ -n "$JAVA" ]; then
+  echo "→ checkstyle + spring-javaformat (fichiers indexés)"
+  INCLUDES=$(printf '%s\n' "$JAVA" | sed -E 's#^src/(main|test)/java/##' | paste -sd, -)
+  mvn -q -f pom.xml \
+    checkstyle:check -Dcheckstyle.includeTestSourceDirectory=true -Dcheckstyle.includes="$INCLUDES" \
+    spring-javaformat:validate
+fi
+
+exit 0

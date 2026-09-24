@@ -1,0 +1,49 @@
+{
+  "nav": { "home": "Home" },
+  "legal": {
+    "mentions": "Legal notice",
+    "privacy": "Privacy policy",
+    "cookies": "Cookies",
+    "contact": "Contact",
+    "cgv": "Terms of sale",
+    "placeholder": "Content to be completed by the project."
+  },
+  "pages": {
+    "dashboard": "Home",
+    "profile": "Profile",
+    "settings": "Settings",
+    "notFound": "Page not found"
+  },
+  "actions": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "menu": "Menu",
+    "notifications": "Notifications",
+    "openMenu": "Open menu"
+  },
+  "user": {
+    "menu": "My account",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "a11y": "Contrast"
+  },
+  "auth": { "loginButton": "Log in" },
+  "public": { "tagline": "Accessible without authentication." },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "markAllRead": "Mark all as read",
+    "clearAll": "Clear all",
+    "remove": "Remove"
+  }
+}

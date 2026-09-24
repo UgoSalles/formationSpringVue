@@ -1,0 +1,25 @@
+#!/bin/sh
+# Hook géré par le platform — ne pas modifier.
+# Valide le message de commit (Conventional Commits, cf. §5.6 du platform).
+MSG_FILE="$1"
+# Première ligne non vide / non commentaire = le sujet.
+SUBJECT=$(grep -vE '^[[:space:]]*#' "$MSG_FILE" | grep -vE '^[[:space:]]*$' | head -1)
+
+# Laisser passer les commits techniques générés par git (merge, revert, fixup/squash).
+case "$SUBJECT" in
+  "Merge "*|"Revert "*|"fixup! "*|"squash! "*) exit 0 ;;
+esac
+
+PATTERN='^(feat|fix|refactor|chore|docs|test)(\([a-z0-9._-]+\))?!?: .+'
+if printf '%s' "$SUBJECT" | grep -Eq "$PATTERN"; then
+  exit 0
+fi
+
+echo ""
+echo "  ✗ Message de commit non conforme (Conventional Commits)."
+echo "    Reçu   : $SUBJECT"
+echo "    Format : <type>(scope optionnel): description"
+echo "    Types  : feat · fix · refactor · chore · docs · test   (suffixe '!' = breaking change)"
+echo "    Ex.    : feat(auth): ajoute le refresh silencieux des tokens"
+echo ""
+exit 1
