@@ -10,7 +10,11 @@ export default defineAppConfig({
     // surcharger, décommenter et nommer un thème déclaré dans theme.config :
     // defaultTheme: 'souverainLight',
     // Libellés = clés i18n (cf. i18n/ de la couche). `icon` = nom d'icône MDI (rendu par Vuetify).
-    navItems: [{ label: 'nav.home', to: '/', icon: 'mdi-home' }],
+    navItems: [
+      { label: 'nav.home', to: '/', icon: 'mdi-home' },
+      { label: 'nav.regions', to: '/regions', icon: 'mdi-map' },
+      { label: 'nav.pokemons', to: '/pokemons', icon: 'mdi-paw' },
+    ],
     // Liens légaux affichés dans le footer (pages publiques générées sous app/pages/).
     // Contenu des pages à compléter côté projet.
     legalLinks: [

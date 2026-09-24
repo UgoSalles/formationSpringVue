@@ -23,10 +23,19 @@ export default defineNuxtConfig({
   },
 
   // Dev standalone : proxie /api vers le back local (localhost:8080 = APP_PORT) — same-origin, pas de CORS.
+  // NB : le devProxy de Nitro retire le préfixe `/api` avant de transmettre la requête (h3 `app.use`
+  // mount-path) — on le réintègre dans le `target` pour retomber sur le context-path `/api` du back.
   nitro: {
     devProxy: {
-      '/api': { target: 'http://localhost:8080', changeOrigin: true },
+      '/api': { target: 'http://localhost:8080/api', changeOrigin: true },
     },
+  },
+
+  // Namespaces i18n du projet (fusionnés avec ceux de la couche @platform/front).
+  i18n: {
+    locales: [
+      { code: 'fr', files: ['fr/regions.json', 'fr/pokemons.json', 'fr/nav.json'] },
+    ],
   },
 
   app: {

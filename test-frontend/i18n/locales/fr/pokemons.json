@@ -1,0 +1,31 @@
+{
+  "pokemons": {
+    "titles": {
+      "list": "Pokémons",
+      "create": "Nouveau pokémon",
+      "edit": "Modifier le pokémon",
+      "view": "Détail du pokémon"
+    },
+    "headers": {
+      "nom": "Nom",
+      "types": "Types"
+    },
+    "fields": {
+      "nom": "Nom",
+      "nomRequired": "Le nom est obligatoire",
+      "types": "Types",
+      "description": "Description",
+      "region": "Région",
+      "nature": "Nature",
+      "talents": "Talents",
+      "poids": "Poids (kg)",
+      "taille": "Taille (m)",
+      "pv": "PV",
+      "attaque": "Attaque",
+      "defense": "Défense",
+      "attaqueSpeciale": "Attaque spéciale",
+      "defenseSpeciale": "Défense spéciale",
+      "vitesse": "Vitesse"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "regions": {
+    "titles": {
+      "list": "Régions",
+      "create": "Nouvelle région",
+      "edit": "Modifier la région",
+      "view": "Détail de la région"
+    },
+    "headers": {
+      "nom": "Nom",
+      "generation": "Génération"
+    },
+    "fields": {
+      "nom": "Nom",
+      "nomRequired": "Le nom est obligatoire",
+      "generation": "Génération",
+      "description": "Description"
+    }
+  }
+}
